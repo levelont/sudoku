@@ -70,6 +70,7 @@ func NewBoard(values [9][9]int) (board, error) {
 				row: &b.rows[i],
 				column: &b.columns[j],
 				region: b.region(i,j),
+				possibilities: make(map[int]bool),
 			}
 		}
 	}
@@ -107,6 +108,24 @@ func (b *board) set(i,j,value int) {
 	b.rows[i][value] = true
 	b.columns[j][value] = true
 	(*b.region(i,j))[value] = true
+}
+
+func (c *cell) updatePossibilities() {
+	rowFull := len(*c.row) == 9
+	columnFull := len(*c.column) == 9
+	regionFull := len(*c.region) == 9
+	if rowFull || columnFull || regionFull {
+		return
+	}
+
+	for i := 1; i <= 9; i ++ {
+		_, okRow := (*c.row)[i]
+		_, okColumn := (*c.column)[i]
+		_, okRegion := (*c.region)[i]
+		if !okRow && !okColumn && !okRegion {
+			c.possibilities[i] = true
+		}
+	}
 }
 
 type cell struct {
