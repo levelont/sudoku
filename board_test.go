@@ -148,3 +148,64 @@ func TestNewBoard(t *testing.T) {
 		}
 	}
 }
+
+func TestUpdatePossibilities(t *testing.T) {
+	tests := []struct{
+		name string
+		cell cell
+		expectedPossibilities map[int]bool
+	}{
+		{
+			name: "1 in row, 2 in column, 3 in region",
+			cell: cell{
+				row: &map[int]bool{1: true},
+				column: &map[int]bool{2: true},
+				region: &map[int]bool{3: true},
+				possibilities: make(map[int]bool),
+			},
+			expectedPossibilities: map[int]bool{
+				4: true,
+				5: true,
+				6: true,
+				7: true,
+				8: true,
+				9: true,
+			},
+		},
+		{
+			name: "row, column and region empty",
+			cell: cell{
+				row: &map[int]bool{},
+				column: &map[int]bool{},
+				region: &map[int]bool{},
+				possibilities: make(map[int]bool),
+			},
+			expectedPossibilities: map[int]bool{
+				1: true,
+				2: true,
+				3: true,
+				4: true,
+				5: true,
+				6: true,
+				7: true,
+				8: true,
+				9: true,
+			},
+		},
+		{
+			name: "all values set",
+			cell: cell{
+				row: &map[int]bool{1: true, 2: true, 3: true},
+				column: &map[int]bool{4: true, 5: true, 6: true},
+				region: &map[int]bool{7: true, 8: true, 9: true},
+				possibilities: make(map[int]bool),
+			},
+			expectedPossibilities: make(map[int]bool),
+		},
+	}
+
+	for _, test := range tests {
+		test.cell.updatePossibilities()
+		assert.Equal(t, test.expectedPossibilities, test.cell.possibilities, test.name)
+	}
+}
